@@ -35,6 +35,7 @@ message(STATUS ${CMAKE_MODULE_PATH})
 
 find_package( CBLAS REQUIRED )
 find_package( LAPACK REQUIRED )
+find_package( GC REQUIRED )
 find_package(OpenMP)
 if (OPENMP_FOUND)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
@@ -60,6 +61,9 @@ endforeach(MLsourcefile ${ML_SRC})
  
 #add_library(ml SHARED ${ML_SRC} ${ML_INCLUDE})
 add_library(ml STATIC ${ML_SRC} ${ML_INCLUDE})
+
+add_executable(ml_exe src/ml.c)
+target_link_libraries( ml_exe ml ${LAPACK_LIBRARIES} ${CBLAS_LIBRARIES} ${GC_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES} ${CUDA_LIBRARIES})
 
 install(FILES ${ML_INCLUDE}
         DESTINATION include
