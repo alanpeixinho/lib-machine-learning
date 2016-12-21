@@ -1,20 +1,24 @@
 #include <stdio.h>
 #include <ml.h>
 #include <ml_matrix.h>
+#include <ml_csv.h>
+#include <ml_dataset.h>
 
 int main() {
 	MlMatrix* m = mlCreateMatrix(2, 2);
 
-	m->data[0]=1;
-	m->data[1]=2;
-	m->data[2]=3;
-	m->data[3]=4;
+	mlMatElem(m,0,0) = 1;
+    mlMatElem(m,0,1) = 2;
+    mlMatElem(m,1,0) = 3;
+    mlMatElem(m,1,1) = 4;
 
-	MlMatrix* m2 = mlMultMatrix(m, m);
+    MlMatrix* m2 = mlMultMatrix(m, m);
 
-    for (int i = 0; i < m2->n; ++i) {
-        printf("%f ", m2->data[i]);
-    }
-    printf("\n");
+    mlPrintMatrix(m2);
+
+    MlDataSet* dataset = mlLoadCsvDataSet("csv.csv", 0);
+
+    mlPrintMatrix(dataset->X);
+    mlPrintMatrix(dataset->Y);
 
 }
