@@ -21,7 +21,7 @@ typedef struct {
     char sep;
 } MlCsvFile;
 
-MlCsvFile* mlLoadCsvFile(const char* filename);
+MlCsvFile* mlLoadCsvFile(const char* filename, char sep);
 bool mlNextCsvVal(MlCsvFile* file);
 float mlReadFloatFile(FILE* fp);
 

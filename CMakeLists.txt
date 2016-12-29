@@ -17,7 +17,7 @@ if(ML_GPU)
     include_directories(${CUDA_INCLUDE_DIRS})
 endif()
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11 -ggdb -O3")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11 -ggdb")
 
 if(ML_DEBUG)
     add_definitions(-DML_DEBUG=1)
@@ -37,6 +37,7 @@ find_package( CBLAS REQUIRED )
 find_package( LAPACK REQUIRED )
 find_package( GC REQUIRED )
 find_package(OpenMP)
+
 if (OPENMP_FOUND)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
 endif()
@@ -48,7 +49,9 @@ option (USE_OPENMP "Use OpenMP for multithreading" ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
  
 message(Compiler: "${CMAKE_C_COMPILER_ID}")
- 
+
+message(STATUS "${GC_LIBRARIES}")
+
 aux_source_directory(${ML_SOURCE_DIR}/src ML_SRC)
  
 file(GLOB ML_INCLUDE
@@ -60,14 +63,13 @@ foreach( MLsourcefile ${ML_SRC} )
 endforeach(MLsourcefile ${ML_SRC})
  
 #add_library(ml SHARED ${ML_SRC} ${ML_INCLUDE})
-add_library(ml STATIC ${ML_SRC} ${ML_INCLUDE})
+add_library(ml STATIC ${ML_SRC} ${ML_INCLUDE} include/ml_metrics.h src/ml_metrics.c)
 
 add_executable(ml_exe src/ml.c)
 target_link_libraries( ml_exe ml ${LAPACK_LIBRARIES} ${CBLAS_LIBRARIES} ${GC_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES} ${CUDA_LIBRARIES})
 
 install(FILES ${ML_INCLUDE}
-        DESTINATION include
-        )
+        DESTINATION include)
 
 
 install (TARGETS ml

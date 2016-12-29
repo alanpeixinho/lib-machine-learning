@@ -6,16 +6,6 @@
 #include <ml_memory.h>
 #include <stdbool.h>
 
-MlCsvFile* mlLoadCsvFile(const char* filename) {
-    MlCsvFile* csv = mlAlloc(MlCsvFile);
-    csv->sep = ' ';
-    csv->file = fopen(filename, "r");
-
-    mlCountCsvRowCol(csv);
-
-    return csv;
-}
-
 void mlCountCsvRowCol(MlCsvFile* csv) {
     csv->ncol = 1;
     csv->nrow = 0;
@@ -33,14 +23,30 @@ void mlCountCsvRowCol(MlCsvFile* csv) {
     rewind(csv->file);
 }
 
-bool mlFindCharFile(FILE* fp, char c) {
+MlCsvFile* mlLoadCsvFile(const char* filename, char sep) {
+    MlCsvFile* csv = mlAlloc(MlCsvFile);
+    csv->sep = sep;
+    csv->file = fopen(filename, "r");
+
+    mlCountCsvRowCol(csv);
+
+    return csv;
+}
+
+bool mlFindSep(FILE *fp, char c) {
 
     for(;;) {
         char ch = fgetc(fp);
-        if(ch == c)
+        if(ch == c) {
+//            ungetc(ch, fp);
             return true;
-        else if(ch==EOF)
+        }
+        else if(ch==EOF) {
             return false;
+        }
+        else if(ch=='\n') {
+            return false;
+        }
     }
 
 }
@@ -59,8 +65,9 @@ float mlReadFloatFile(FILE* fp) {
 
 bool mlNextCsvVal(MlCsvFile* file) {
 
-    if(file->col>0 && file->col<file->ncol-1)
-        mlFindCharFile(file->file, file->sep);
+    //if(file->col>0 && file->col<file->ncol-1)
+    if(file->sep!=' ')
+        mlFindSep(file->file, file->sep);
 
     file->col++;
 

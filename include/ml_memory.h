@@ -6,6 +6,7 @@
 #define ML_ML_MEMORY_H
 
 #include <ml.h>
+#include <gc.h>
 
 
 void* _mlAlloc(size_t n, size_t size);

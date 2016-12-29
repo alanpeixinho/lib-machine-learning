@@ -19,6 +19,7 @@ find_file(GC_LIBRARIES
         libgc.so
         libgc.a
         PATHS
+        /opt/local/lib
         /usr/lib
         /usr/lib/x86_64-linux-gnu
         $ENV{GCDIR}/lib
