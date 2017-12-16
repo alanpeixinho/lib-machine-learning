@@ -11,16 +11,16 @@
 typedef struct {
 
     int k;
-    MlDataSet* train;
+    ml_DataSet* train;
     MlMatrix* _dist;
     MlMatrix* _voting;
-    int* _kNearest;
+    int* _k_nearest;
     bool* _selected;
 
-} MlKNN;
+} ml_KNN;
 
-MlKNN* mlCreateKNN(int k);
-float mlPredictKNN(MlKNN* knn, float X[]);
-void mlTrainKNN(MlKNN* knn, MlDataSet* dataset);
+ml_KNN* ml_create_knn(int k);
+float ml_predict_knn(ml_KNN *knn, float *X);
+void ml_train_knn(ml_KNN *knn, ml_DataSet *dataset);
 
 #endif //ML_ML_KNN_H_H

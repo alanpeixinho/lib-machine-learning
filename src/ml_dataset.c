@@ -9,25 +9,25 @@
 #include <ml_dataset.h>
 #include <ml_math.h>
 
-MlDataSet* mlCreateDataSet(int nsamples, int nfeats, int nclasses) {
+ml_DataSet* ml_create_dataSet(int nsamples, int nfeats, int nclasses) {
 
-    MlDataSet* dataSet = mlAlloc(MlDataSet);
-    dataSet->nsamples = nsamples;
-    dataSet->nfeats = nfeats;
-    dataSet->nclasses = nclasses;
+    ml_DataSet* dataset = ml_alloc(ml_DataSet);
+    dataset->nsamples = nsamples;
+    dataset->nfeats = nfeats;
+    dataset->nclasses = nclasses;
 
-    dataSet->feats = mlCreateMatrix(nsamples, nfeats);
-    dataSet->label = mlCreateMatrix(nsamples, 1);
-    dataSet->predict = mlCreateMatrix(nsamples, 1);
-    dataSet->sampleWeight = mlCreateMatrix(nsamples, 1);
-    dataSet->predictWeight = mlCreateMatrix(nsamples, nclasses);
+    dataset->feats = ml_create_matrix(nsamples, nfeats);
+    dataset->label = ml_create_matrix(nsamples, 1);
+    dataset->predict = ml_create_matrix(nsamples, 1);
+    dataset->sample_weight = ml_create_matrix(nsamples, 1);
+    dataset->predict_weight = ml_create_matrix(nsamples, nclasses);
 
-    dataSet->status = mlAllocArray(nsamples, MlSampleStatus);
+    dataset->status = ml_alloc_array(nsamples, ml_SampleStatus);
 
-    return dataSet;
+    return dataset;
 }
 
-int mlSamplesNumber(MlDataSet* dataset, MlSampleStatus status) {
+int ml_samples_number(ml_DataSet *dataset, ml_SampleStatus status) {
     int n = 0;
     for (int i = 0; i < dataset->nsamples; ++i) {
         if(dataset->status[i] & status) {
@@ -37,27 +37,25 @@ int mlSamplesNumber(MlDataSet* dataset, MlSampleStatus status) {
     return n;
 }
 
-MlDataSet* mlSelectDataSet(MlDataSet* dataset, MlSampleStatus status) {
-    int n = mlSamplesNumber(dataset, status);
+ml_DataSet* ml_select_dataset(ml_DataSet *dataset, ml_SampleStatus status) {
+    int n = ml_samples_number(dataset, status);
 
-
-    MlDataSet* selected = mlCreateDataSet(n, dataset->nfeats, dataset->nclasses);
-
-    mlSetMatrix(selected->feats, 42);
+    ml_DataSet* selected = ml_create_dataSet(n, dataset->nfeats, dataset->nclasses);
+    ml_set_matrix(selected->feats, 42);
 
     int s = 0;
     for (int i = 0; i < dataset->nsamples; ++i) {
         if(dataset->status[i] & status) {
-            mlMatElem(selected->sampleWeight, s, 0) = mlMatElem(dataset->sampleWeight, i, 0);
-            mlMatElem(selected->label, s, 0) = mlMatElem(dataset->label, i, 0);
-            mlMatElem(selected->predict, s, 0) = mlMatElem(dataset->predict, i, 0);
+            ml_mat_elem(selected->sample_weight, s, 0) = ml_mat_elem(dataset->sample_weight, i, 0);
+            ml_mat_elem(selected->label, s, 0) = ml_mat_elem(dataset->label, i, 0);
+            ml_mat_elem(selected->predict, s, 0) = ml_mat_elem(dataset->predict, i, 0);
 
             for (int j = 0; j < dataset->nfeats; ++j) {
-                mlMatElem(selected->feats, s, j) = mlMatElem(dataset->feats, i, j);
+                ml_mat_elem(selected->feats, s, j) = ml_mat_elem(dataset->feats, i, j);
             }
 
             for (int c = 0; c < dataset->nclasses; ++c) {
-                mlMatElem(selected->predictWeight, s, c) = mlMatElem(dataset->predictWeight, i, c);
+                ml_mat_elem(selected->predict_weight, s, c) = ml_mat_elem(dataset->predict_weight, i, c);
             }
             s++;
         }
@@ -66,62 +64,62 @@ MlDataSet* mlSelectDataSet(MlDataSet* dataset, MlSampleStatus status) {
     return selected;
 }
 
-void mlPrintStatsDataSet(MlDataSet* dataset) {
+void ml_print_stats_dataset(ml_DataSet *dataset) {
     printf("# Samples: %d, ", dataset->nsamples);
     printf("# Feats: %d, ", dataset->nfeats);
     printf("# Samples: %d\n", dataset->nclasses);
 
-    mlPrintMatrix(mlMatrixSumCol(dataset->feats));
+	ml_print_matrix(mlMatrixSumCol(dataset->feats));
 }
 
-MlDataSet* mlLoadCsvDataSet(const char *filename, int classPos) {
-    MlCsvFile* csv = mlLoadCsvFile(filename, ' ');
+ml_DataSet* ml_load_csv_dataset(const char *filename, int classPos) {
+    ml_CsvFile* csv = ml_load_csv_file(filename, ' ');
 
     int nsamples = csv->nrow;
     int nfeats = csv->ncol - (classPos<csv->ncol);
 
-    MlDataSet* dataSet = mlAlloc(MlDataSet);
+    ml_DataSet* dataSet = ml_alloc(ml_DataSet);
     dataSet->nsamples = nsamples;
     dataSet->nfeats = nfeats;
 //    dataSet->nclasses = nclasses;
 
-    dataSet->feats = mlCreateMatrix(nsamples, nfeats);
-    dataSet->label = mlCreateMatrix(nsamples, 1);
-    dataSet->predict = mlCreateMatrix(nsamples, 1);
-    dataSet->sampleWeight = mlCreateMatrix(nsamples, 1);
+    dataSet->feats = ml_create_matrix(nsamples, nfeats);
+    dataSet->label = ml_create_matrix(nsamples, 1);
+    dataSet->predict = ml_create_matrix(nsamples, 1);
+    dataSet->sample_weight = ml_create_matrix(nsamples, 1);
 
-    dataSet->status = mlAllocArray(nsamples, MlSampleStatus);
+    dataSet->status = ml_alloc_array(nsamples, ml_SampleStatus);
 
     float f;
     do {
-        f = mlReadFloatFile(csv->file);
+        f = ml_read_file_float(csv->file);
 
         if(classPos!=csv->col) {
-            mlMatElem(dataSet->feats, csv->row, csv->col - (csv->col > classPos)) = f;
+            ml_mat_elem(dataSet->feats, csv->row, csv->col - (csv->col > classPos)) = f;
         } else {
-            mlMatElem(dataSet->label, csv->row, 0) = f;
+            ml_mat_elem(dataSet->label, csv->row, 0) = f;
             if(dataSet->nclasses < (f + 1))
                 dataSet->nclasses = f + 1;
         }
-    } while(mlNextCsvVal(csv));
+    } while(ml_next_csv_val(csv));
 
-    dataSet->predictWeight = mlCreateMatrix(nsamples, dataSet->nclasses);
+    dataSet->predict_weight = ml_create_matrix(nsamples, dataSet->nclasses);
 
     return dataSet;
 }
 
-void mlSelectTrainSamples(MlDataSet* dataset, float trainPerc) {
+void ml_select_train_samples(ml_DataSet *dataset, float trainPerc) {
     for (int i = 0; i < dataset->nsamples; ++i) {
-        float r = mlRand();
+        float r = ml_rand();
         dataset->status[i] = (r<=trainPerc)? TRAIN : TEST;
     }
 }
 
-void mlFreeDataSet(MlDataSet* dataSet) {
-    mlFreeMatrix(dataSet->feats);
-    mlFreeMatrix(dataSet->predict);
-    mlFreeMatrix(dataSet->sampleWeight);
-    mlFreeMatrix(dataSet->predictWeight);
-    mlFree(dataSet->status);
-    mlFreeMatrix(dataSet);
+void ml_free_data_set(ml_DataSet *dataSet) {
+	ml_free_matrix(dataSet->feats);
+	ml_free_matrix(dataSet->predict);
+	ml_free_matrix(dataSet->sample_weight);
+	ml_free_matrix(dataSet->predict_weight);
+    ml_free(dataSet->status);
+	ml_free_matrix(dataSet);
 }

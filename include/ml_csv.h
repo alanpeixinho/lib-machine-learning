@@ -19,10 +19,10 @@ typedef struct {
     size_t ncol;
 
     char sep;
-} MlCsvFile;
+} ml_CsvFile;
 
-MlCsvFile* mlLoadCsvFile(const char* filename, char sep);
-bool mlNextCsvVal(MlCsvFile* file);
-float mlReadFloatFile(FILE* fp);
+ml_CsvFile* ml_load_csv_file(const char *filename, char sep);
+bool ml_next_csv_val(ml_CsvFile *file);
+float ml_read_file_float(FILE *fp);
 
 #endif //ML_ML_CSV_H

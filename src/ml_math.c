@@ -6,20 +6,20 @@
 #include <float.h>
 #include <stdlib.h>
 
-float mlFastPow(float x, int p) {
+float ml_fast_pow(float x, int p) {
     switch (p) {
         case 2:
             return x*x;
         case 3:
             return x*x*x;
         case 4:
-            return mlFastPow(x*x, 2);
+            return ml_fast_pow(x * x, 2);
         default:
             return pow(x, p);
     }
 }
 
-int mlArgMax(float* val, int n) {
+int ml_arg_max_float(float *val, int n) {
     float max = -FLT_MAX;
     int idx;
     for (int i = 0; i < n; ++i) {
@@ -31,11 +31,23 @@ int mlArgMax(float* val, int n) {
     return idx;
 }
 
+int ml_arg_max_int(int *val, int n) {
+	int max = -INT_MAX;
+	int idx;
+	for (int i = 0; i < n; ++i) {
+		if(val[i] > max){
+			idx = i;
+			max = val[i];
+		}
+	}
+	return idx;
+}
 
-float mlRand() {
+
+float ml_rand() {
     return ((float)rand()/(float)(RAND_MAX));
 }
 
-float mlUniformRand(float min, float max) {
-    return min + mlRand()*(max-min);
+float ml_uniform_rand(float min, float max) {
+    return min + ml_rand()*(max-min);
 }

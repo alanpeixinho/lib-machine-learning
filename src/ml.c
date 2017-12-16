@@ -11,36 +11,35 @@ int main() {
 
     GC_INIT();
 
-	MlMatrix* m = mlCreateMatrix(2, 2);
+	MlMatrix* m = ml_create_matrix(2, 2);
 
-	mlMatElem(m,0,0) = 1;
-    mlMatElem(m,0,1) = 2;
-    mlMatElem(m,1,0) = 3;
-    mlMatElem(m,1,1) = 4;
+	ml_mat_elem(m,0,0) = 1;
+    ml_mat_elem(m,0,1) = 2;
+    ml_mat_elem(m,1,0) = 3;
+    ml_mat_elem(m,1,1) = 4;
 
     MlMatrix* m2 = mlMultMatrix(m, m);
 
-    mlPrintMatrix(m2);
+	ml_print_matrix(m2);
 
-    MlDataSet* dataset = mlLoadCsvDataSet("/Users/peixinho/mnist.csv", 0);
+    ml_DataSet* dataset = ml_load_csv_dataset("/Users/peixinho/mnist.csv", 0);
 
-//    mlPrintMatrix(dataset->feats);
-    //mlPrintMatrix(dataset->label);
-    mlSelectTrainSamples(dataset, 0.5);
+//    ml_print_matrix(dataset->feats);
+    //ml_print_matrix(dataset->label);
+	ml_select_train_samples(dataset, 0.5);
 
-    MlKNN* knn = mlCreateKNN(3);
+    ml_KNN* knn = ml_create_knn(3);
 
-    mlTrainKNN(knn, dataset);
+	ml_train_knn(knn, dataset);
 
     int s = 0;
     for (int i = 0; i < 10; ++i) {
 
-        s = mlUniformRand(0,5000);
+        s = ml_uniform_rand(0, 5000);
         printf("-> %d\n", dataset->status[s]);
-        float f = mlPredictKNN(knn, mlMatRow(dataset->feats, s));
+        float f = ml_predict_knn(knn, ml_mat_row(dataset->feats, s));
 
-        printf("%f %f\n", mlMatElem(dataset->label, s, 0), f);
-
+        printf("%f %f\n", ml_mat_elem(dataset->label, s, 0), f);
     }
 
 }

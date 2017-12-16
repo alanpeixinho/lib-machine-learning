@@ -6,13 +6,13 @@
 #include <cblas.h>
 #include <ml_memory.h>
 
-MlMatrix* mlCreateMatrix(size_t nrow, size_t ncol) {
+MlMatrix* ml_create_matrix(size_t nrow, size_t ncol) {
     MlMatrix* m = NULL;
-    m = mlAlloc(MlMatrix);
+    m = ml_alloc(MlMatrix);
     m->nrows = nrow;
     m->ncols = ncol;
     m->n = nrow*ncol;
-    m->data = mlAllocArray(m->n, float);
+    m->data = ml_alloc_array(m->n, float);
     return m;
 }
 
@@ -25,7 +25,7 @@ void mlMultMatrixIp(MlMatrix* A, MlMatrix* B, MlMatrix* M) {
 }
 
 MlMatrix* mlMultMatrix(MlMatrix* A, MlMatrix* B) {
-    MlMatrix* M = mlCreateMatrix(B->ncols, A->nrows);
+    MlMatrix* M = ml_create_matrix(B->ncols, A->nrows);
     mlMultMatrixIp(A, B, M);
     return M;
 }
@@ -39,33 +39,33 @@ float mlMeanMatrix(MlMatrix* m) {
 }
 
 MlMatrix* mlMatrixSumCol(MlMatrix* m) {
-    MlMatrix* sum = mlCreateMatrix(1, m->ncols);
+    MlMatrix* sum = ml_create_matrix(1, m->ncols);
 
     for (int i = 0; i < m->nrows; ++i) {
         for (int j = 0; j < m->ncols; ++j) {
-            mlMatElem(sum, 0, j) += mlMatElem(m, i, j);
+            ml_mat_elem(sum, 0, j) += ml_mat_elem(m, i, j);
         }
     }
 
     return sum;
 }
 
-void mlSetMatrix(MlMatrix* m, float val) {
+void ml_set_matrix(MlMatrix *m, float val) {
     for (int i = 0; i < m->n; ++i)
         m->data[i] = val;
 }
 
-void mlFreeMatrix(MlMatrix* m) {
-    mlFree(m->data);
-    mlFree(m);
+void ml_free_matrix(MlMatrix *m) {
+    ml_free(m->data);
+    ml_free(m);
 }
 
-void mlPrintMatrix(MlMatrix* m) {
+void ml_print_matrix(MlMatrix *m) {
     printf("[");
     for (int r = 0; r < m->nrows; ++r) {
         printf("[");
         for (int c = 0; c < m->ncols; ++c) {
-            printf("%4.2f", mlMatElem(m, r, c));
+            printf("%4.2f", ml_mat_elem(m, r, c));
             if(c < m->ncols-1)
                 printf(", ");
         }

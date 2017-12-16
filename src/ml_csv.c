@@ -5,8 +5,9 @@
 #include <ml_csv.h>
 #include <ml_memory.h>
 #include <stdbool.h>
+#include <ml_common.h>
 
-void mlCountCsvRowCol(MlCsvFile* csv) {
+void ml_count_csv_row_col(ml_CsvFile *csv) {
     csv->ncol = 1;
     csv->nrow = 0;
     char cur, last;
@@ -23,17 +24,21 @@ void mlCountCsvRowCol(MlCsvFile* csv) {
     rewind(csv->file);
 }
 
-MlCsvFile* mlLoadCsvFile(const char* filename, char sep) {
-    MlCsvFile* csv = mlAlloc(MlCsvFile);
+ml_CsvFile* ml_load_csv_file(const char *filename, char sep) {
+    ml_CsvFile* csv = ml_alloc(ml_CsvFile);
     csv->sep = sep;
     csv->file = fopen(filename, "r");
 
-    mlCountCsvRowCol(csv);
+    if(csv->file == NULL) {
+        ml_throw_error("File not found", "ml_load_csv_file()");
+    }
+
+	ml_count_csv_row_col(csv);
 
     return csv;
 }
 
-bool mlFindSep(FILE *fp, char c) {
+bool ml_find_sep(FILE *fp, char c) {
 
     for(;;) {
         char ch = fgetc(fp);
@@ -57,17 +62,17 @@ int fpeek(FILE* fp)
     return c == EOF ? EOF : ungetc(c, fp);
 }
 
-float mlReadFloatFile(FILE* fp) {
+float ml_read_file_float(FILE *fp) {
     float f;
     fscanf(fp,"%f",&f);
     return f;
 }
 
-bool mlNextCsvVal(MlCsvFile* file) {
+bool ml_next_csv_val(ml_CsvFile *file) {
 
     //if(file->col>0 && file->col<file->ncol-1)
     if(file->sep!=' ')
-        mlFindSep(file->file, file->sep);
+	    ml_find_sep(file->file, file->sep);
 
     file->col++;
 

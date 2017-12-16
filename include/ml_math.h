@@ -5,9 +5,9 @@
 #ifndef ML_ML_MATH_H
 #define ML_ML_MATH_H
 
-float mlFastPow(float x, int p);
+float ml_fast_pow(float x, int p);
 int mlArgMax(float* val, int n);
-float mlRand();
-float mlUniformRand(float min, float max);
+float ml_rand();
+float ml_uniform_rand(float min, float max);
 
 #endif //ML_ML_MATH_H

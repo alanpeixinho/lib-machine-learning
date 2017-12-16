@@ -7,6 +7,7 @@
 
 #include "ml_dataset.h"
 
-float ml_accuracy(MlDataSet* dataset);
+float mlAccuracy(ml_DataSet* dataset);s
+float mlNormL2(float x[], float y[], int n);
 
 #endif //ML_ML_METRICS_H
