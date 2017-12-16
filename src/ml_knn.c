@@ -59,5 +59,5 @@ float ml_predict_knn(ml_KNN *knn, float *X) {
         knn->_selected[selected] = true;
     }
 
-    return ml_arg_max(knn->_voting->data, knn->train->nclasses);
+    return ml_arg_max_float(knn->_voting->data, knn->train->nclasses);
 }

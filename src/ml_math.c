@@ -4,6 +4,7 @@
 
 #include <math.h>
 #include <float.h>
+#include <limits.h>
 #include <stdlib.h>
 
 float ml_fast_pow(float x, int p) {
